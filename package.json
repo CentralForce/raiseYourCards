@@ -3,7 +3,7 @@
   "main": "./server/server.js",
   "scripts": {
     "server": "node ./server/server.js",
-    "client": "cd client && npm run production",
+    "client": "cd client && npm run production"
   },
   "dependencies": {
     "express": "^4.16.3",
