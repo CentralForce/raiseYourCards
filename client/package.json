@@ -1,0 +1,22 @@
+{
+  "name": "voteboard-client",
+  "main": "./js/app.js",
+  "scripts": {
+    "production": "webpack"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "css-loader": "^0.26.1",
+    "style-loader": "^0.13.1",
+    "extract-text-webpack-plugin": "^2.0.0-rc.0",
+    "html-webpack-plugin": "^2.26.0",
+    "webpack": "^2.2.0"
+  },
+  "dependencies": {
+    "chart.js": "^2.7.2",
+    "socket.io": "^2.1.1"
+  }
+}
+
