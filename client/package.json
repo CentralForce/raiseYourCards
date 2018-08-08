@@ -2,7 +2,7 @@
   "name": "voteboard-client",
   "main": "./js/app.js",
   "scripts": {
-    "production": "webpack"
+    "production": "webpack -p"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
