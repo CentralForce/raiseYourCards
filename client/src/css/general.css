@@ -1,3 +1,4 @@
+/* #region - standard */
 body {
   background-color: #111111;
   margin: 0;
@@ -18,7 +19,7 @@ body {
   border-radius: 5px;
 }
 
-.bar {
+.section {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -65,4 +66,27 @@ body {
 .button:hover {
   opacity: 1;
 }
+/* #endregion*/
+
+/* #region - custom*/
+.custom-card {
+  background-color: #e1e1e1;
+  color: #363636;
+  width: 100px;
+  height: 100px;
+}
+
+.custom-submit {
+  background-color: #0a84ff;
+  color: #ffffff;
+  width: 100%;
+}
+
+.custom-reset {
+  background-color: #0a84ff;
+  color: #ffffff;
+  width: 100%;
+}
+
+/* #endregion */
 
