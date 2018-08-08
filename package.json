@@ -4,7 +4,7 @@
   "scripts": {
     "server": "node ./server/server.js",
     "client": "cd client && npm run production",
-    "client-server": "npm run client && npm run server"
+    "client-server": "npm run client && npm run server",
     "install": "npm install && cd client && npm install"
   },
   "dependencies": {
