@@ -8,22 +8,22 @@ module.exports = class {
 
   setup () {
     // setup values
-    for (let i = 0; i < this.config.bars.length; i++) {
+    for (let i = 0; i < this.config.sections.length; i++) {
       if (!this.values[i]) {
         this.values[i] = []
       }
-      for (let j = 0; j < this.config.bars[i].content[0].card.length; j++) {
+      for (let j = 0; j < this.config.sections[i].content[0].card.length; j++) {
         this.values[i][j] = 0
       }
     }
 
     // setup legend
-    for (let i = 0; i < this.config.bars.length; i++) {
+    for (let i = 0; i < this.config.sections.length; i++) {
       if (!this.legend[i]) {
         this.legend[i] = []
       }
-      for (let j = 0; j < this.config.bars[i].content[0].card.length; j++) {
-        this.legend[i][j] = this.config.bars[i].content[0].card[j].value
+      for (let j = 0; j < this.config.sections[i].content[0].card.length; j++) {
+        this.legend[i][j] = this.config.sections[i].content[0].card[j].value
       }
     }
   }
@@ -41,4 +41,5 @@ module.exports = class {
     this.setup()
   }
 }
+
 
