@@ -31,11 +31,144 @@ fetch('/api/config', {mode: 'same-origin'})
     console.log(error)
   })
 
-// Process vote
 socket.on('voted', function (name) {
   console.log('Received vote from ', name)
+  updateCharts()
+})
 
-  // update charts
+socket.on("reseted", function (name) {
+  console.log("Received reset from", name)
+  updateCharts()
+})
+
+function votePage () {
+  let pageElement = uiElements.page()
+
+  // create card sections
+  for (let section of config.sections) {
+    let sectionElement = document.createElement('div')
+    sectionElement.classList.add('section')
+    pageElement.appendChild(sectionElement)
+    for (let content of section.content) {
+      for (let card of content.card) {
+        let cardElement = uiElements.card(card.text)
+        cardElement.addEventListener('click', function () {
+          section.value = card.value
+        })
+        for (let classes of card.class) {
+          cardElement.classList.add(classes)
+        }
+        sectionElement.appendChild(cardElement)
+      }
+    }
+  }
+
+  // create submit button
+  {
+    let submitElement = uiElements.button("Submit", ["submit", "custom-submit"])
+    let sections = config.sections
+    submitElement.addEventListener('click', function () {
+      // send values
+      {
+        let values = []
+        for (let section of sections) {
+          if (!isNaN(section.value)) {
+            values[values.length] = section.value
+          }
+        }
+
+        socket.emit('vote', {
+          name: name,
+          values: values
+        })
+      }
+
+      // change page
+      clearApp()
+      app.appendChild(resultPage())
+      
+    })
+    pageElement.appendChild(submitElement)
+  }
+
+  return pageElement
+}
+
+function resultPage () {
+  chartIndex = []
+  
+  let pageElement = uiElements.page()
+
+    let chartValues
+    fetch('/api/charts', {mode: 'same-origin'})
+      .then(function (response) {
+        return response.json()
+      })
+      .then(function (json) {
+        chartValues = json
+      })
+      .then(function () {
+        for (let i = 0; i < config.sections.length; i++) {
+
+          let sections = config.sections[i]
+
+          // reconstuct cards
+          let cardCollection = []
+          for (let content of sections.content) {
+            for (let card of content.card) {
+              let cardElement = uiElements.card(card.text)
+              for (let classes of card.class) {
+                cardElement.classList.add(classes)
+              }
+              cardCollection.push(cardElement)
+            }
+          }
+
+          // collect attributs
+          let labels = []
+          let color = []
+          for (let card of cardCollection) {
+            labels.push(card.innerHTML)
+            color.push(window.getComputedStyle(card).backgroundColor)
+          }
+
+          // create canvas
+          let canvas = document.createElement('canvas')
+          canvas.setAttribute('width', 300)
+          canvas.setAttribute('height', 300)
+          canvas.classList.add('chart')
+          pageElement.appendChild(canvas)
+
+          chartIndex[chartIndex.length] = uiElements.chart(labels, color, canvas, chartValues[i])
+        }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+
+  let resetElement = uiElements.button("Reset", ["reset", "custom-reset"])
+      pageElement.appendChild(resetElement)
+      resetElement.addEventListener('click', function () {
+        // send reset
+        socket.emit('reset', {
+          name: name
+        })
+  
+        // change page
+        clearApp()
+        app.appendChild(votePage())
+      })
+
+  return pageElement
+}
+
+function clearApp() {
+  for (let node of app.childNodes) {
+    node.remove()
+  }
+}
+
+function updateCharts() {
   if (chartIndex.length > 0) {
     let chartValues
     fetch('/api/charts', {mode: 'same-origin'})
@@ -55,119 +188,4 @@ socket.on('voted', function (name) {
         }
       })
   }
-})
-
-function votePage () {
-  let pageElement = document.createElement('div')
-  pageElement.classList.add('page')
-
-  // setup cards
-  for (let bar of config.bars) {
-    let barElement = document.createElement('div')
-    barElement.classList.add('bar')
-    pageElement.appendChild(barElement)
-
-    for (let content of bar.content) {
-      for (let card of content.card) {
-        let cardElement = uiElements.generateCard(
-          card.text,
-          card.style.width,
-          card.style.height,
-          card.style.bgColor,
-          card.style.fontColor
-        )
-        cardElement.addEventListener('click', function () {
-          bar.value = card.value
-        })
-        barElement.appendChild(cardElement)
-      }
-    }
-  }
-
-  // setup button
-  {
-    let submit = config.submit[0]
-    let submitElement = uiElements.generateSubmit(
-      submit.text,
-      submit.style.width,
-      submit.style.height,
-      submit.style.bgColor,
-      submit.style.fontColor
-    )
-
-    let bars = config.bars
-    submitElement.addEventListener('click', function () {
-      // send values
-      {
-        let values = []
-        for (let bar of bars) {
-          if (!isNaN(bar.value)) {
-            values[values.length] = bar.value
-          } else {
-            // Error-Message
-            return
-          }
-        }
-
-        socket.emit('vote', {
-          name: name,
-          values: values
-        })
-      }
-
-      // change page
-      {
-        let app = document.getElementById('app')
-        for (let node of app.childNodes) {
-          node.remove()
-        }
-        app.appendChild(resultPage())
-      }
-    })
-    pageElement.appendChild(submitElement)
-  }
-
-  return pageElement
 }
-
-function resultPage () {
-  let pageElement = document.createElement('div')
-  pageElement.classList.add('page')
-
-  for (let i = 0; i < config.bars.length; i++) {
-    let bar = config.bars[i]
-
-    let canvas = document.createElement('canvas')
-    canvas.setAttribute('width', 300)
-    canvas.setAttribute('height', 300)
-    canvas.classList.add('chart')
-    pageElement.appendChild(canvas)
-
-    // get attributs
-    let labels = []
-    let color = []
-    for (let content of bar.content) {
-      for (let card of content.card) {
-        labels[labels.length] = card.text
-        color[color.length] = card.style.bgColor + '55'
-      }
-    }
-
-    let chartValues
-    fetch('/api/charts', {mode: 'same-origin'})
-      .then(function (response) {
-        return response.json()
-      })
-      .then(function (json) {
-        chartValues = json
-      })
-      .catch(function (error) {
-        console.log(error)
-      }).then(function () {
-        chartIndex[chartIndex.length] = uiElements.generateChart(labels, color, canvas, chartValues[i])
-      })
-  }
-
-  return pageElement
-}
-
