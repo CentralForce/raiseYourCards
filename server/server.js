@@ -1,37 +1,38 @@
-// modules
+// #region - modules
 const express = require('express')
 const socket = require('socket.io')
 const path = require('path')
+// #endregion
 
-// local files
+// #region - local javascript files
 const config = require('./config.js')
 const Vote = require('./vote.js')
 const Chart = require('./chart.js')
+// #endregion
 
 // const
 const app = express()
 const port = 6660
-const vote = new Vote(config.bars.length)
+const vote = new Vote(config.sections.length)
 const chart = new Chart(config)
 const server = app.listen(port, () => console.log(`Server started on port ${port}`))
 const io = socket(server)
 
 app.use(express.static(path.join(__dirname, '../client/public')))
 
-// provide config
+// #region - API
 app.get('/api/config', (req, res) => {
   res.json(config)
 })
 
-// provide votes
 app.get('/api/votes', (req, res) => {
   res.json(vote.array)
 })
 
-// provide charts
 app.get('/api/charts', (req, res) => {
   res.json(chart.values)
 })
+// #endregion
 
 io.on('connection', function (socket) {
   console.log('Connected: ', socket.id)
@@ -48,5 +49,13 @@ io.on('connection', function (socket) {
       io.emit('voted', data.name)
     }
   })
+
+  socket.on("reset", function(data) {
+    console.log("Reset from ", data.name)
+    chart.reset()
+    vote.reset()
+    io.emit('reseted', data.name)
+  })
 })
+
 
