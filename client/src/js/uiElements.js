@@ -1,14 +1,10 @@
 import {Chart} from 'chart.js'
 
 export class UIElements {
-  generateCard (text, width, height, bgColor, fontColor) {
+  card (text) {
     let card = document.createElement('div')
     card.classList.add('card')
     card.innerHTML = text
-    card.style.backgroundColor = bgColor
-    card.style.color = fontColor
-    card.style.width = width
-    card.style.height = height
     card.addEventListener('click', function () {
       for (let cards of card.parentNode.getElementsByClassName('card')) {
         cards.classList.remove('active')
@@ -18,18 +14,23 @@ export class UIElements {
     return card
   }
 
-  generateSubmit (text, width, height, bgColor, fontColor) {
+  button (text, classes) {
     let submit = document.createElement('div')
-    submit.classList.add('submit', 'button')
     submit.innerHTML = text
-    submit.style.backgroundColor = bgColor
-    submit.style.color = fontColor
-    submit.style.width = width
-    submit.style.height = height
+    submit.classList.add('button')
+    for (let c of classes) {
+      submit.classList.add(c)
+    }
     return submit
   }
 
-  generateChart (labels, bgColors, canvas, content) {
+  page() {
+    let pageElement = document.createElement('div')
+    pageElement.classList.add('page')
+    return pageElement
+  }
+
+  chart (labels, bgColors, canvas, content) {
     let data = {
       labels: labels,
       datasets: [{
@@ -82,4 +83,5 @@ export class UIElements {
     return chart
   }
 }
+
 
