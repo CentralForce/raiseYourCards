@@ -1,15 +1,17 @@
 {
-  "name": "voteboard",
-  "main": "./server/server.js",
+  "name": "voteboard-server",
+  "main": "./src/index.js",
   "scripts": {
-    "server": "node ./server/server.js",
-    "client": "cd client && npm run production",
-    "client-server": "npm run client && npm run server",
-    "install": "npm install && cd client && npm install"
+    "start": "node ./src/index.js",
+    "dev": "nodemon ./src/index.js --exec babel-node --presets env"
   },
-  "dependencies": {
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
     "express": "^4.16.3",
+    "lodash": "^4.17.11",
+    "nodemon": "^1.18.4",
     "socket.io": "^2.1.1"
   }
 }
-
